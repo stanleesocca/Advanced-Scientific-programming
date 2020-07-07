@@ -1,0 +1,47 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+# Fixed point iteration
+Define function: 
+$$ f(x) = c(g(x) - x) \text{where c is a constant, then} $$  
+$$f(a) = 0 \\
+\text{if g(a) = a} $$
+so $f(x) = 0 ~= g(x) = c \cdot f(x) + x$
+
+Discrete wise:
+$$ x_{n+1} = g(x_n)$$
+
+```{r}
+fixed_point <- function(func, x0, tol = 1e-9, max.iter = 100){
+  xold <- x0
+  xnew <- func(xold)
+  iter =  1
+  cat("Iteration ", iter, "Value is: ", xnew, "\n")
+  
+  while((abs(xnew - xold) > tol && (iter < max.iter))){
+    xold <- xnew
+    xnew <- func(xold)
+    iter <- iter + 1
+    cat("Iteration ", iter, "Value is: ", xnew, "\n")
+  } 
+  
+  if(abs(xnew - xold) > tol){
+    cat("Algorithm fails to converge\n")
+    return(NULL)
+  } else {
+    cat("Algorithm converged\n")
+    return(xnew)
+  }
+}
+
+```
+
+Test the algorithm
+```{r}
+func_test <- function(x) return(exp(exp(-x)))
+fixed_point(func_test, 2, tol = 1e-6)
+```
+

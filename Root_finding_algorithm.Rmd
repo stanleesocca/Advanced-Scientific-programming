@@ -26,9 +26,10 @@ fixed_point <- function(func, x0, tol = 1e-9, max.iter = 100){
     xnew <- func(xold)
     iter <- iter + 1
     cat("Iteration ", iter, "Value is: ", xnew, "\n")
+    
   } 
   
-  if(abs(xnew - xold) > tol){
+   if(abs(xnew - xold) > tol){
     cat("Algorithm fails to converge\n")
     return(NULL)
   } else {
@@ -42,6 +43,7 @@ fixed_point <- function(func, x0, tol = 1e-9, max.iter = 100){
 Test the algorithm
 ```{r}
 func_test <- function(x) return(exp(exp(-x)))
-fixed_point(func_test, 2, tol = 1e-6)
+# fund_test <- function(x) return(tanh(x))
+fixed_point(fund_test, 2, tol = 1e-6)
 ```
 

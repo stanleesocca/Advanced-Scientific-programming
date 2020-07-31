@@ -1,0 +1,81 @@
+---
+title: "Hyperbolic maximum finder"
+output: html_notebook
+---
+
+So basically I have some spare time before bed to look at the problem. I think below is something that can work for the case you presented. The threshold can change depending on how finely resolved you want it to be. Your choice. Also, i added the delta part, because i am used to working in finite difference format (maybe that why i couldn't get my head around it earlier!!). 
+
+Let me know if this is closer to what you aim to do or if you have found a better solution. 
+
+Basically you have some equation (eg wave height) that get to a maximum value
+
+$$ f(x) \rightarrow h_{max}$$
+so we need to find:
+$$y = f(x) $$
+And then iteratively assign to $x$ back and forth with $y = f(x)$
+
+$$ \begin{align} 
+x_1 &= starting point (guess value) \\
+y_1 &= f(x_1) \\
+\text{where i = 1} \\ 
+\text{next i = ....threshold} \\
+x_i &= x_{i - 1} + \delta t \\
+y_i &= f(x_i)
+\end{align}
+
+$$
+# IMPLEMENTATION
+
+```{r}
+
+find_hmax <- function(func, starting_point = 0, dt = 0.1, threshold = 0.01){
+# function find the maximum height of a hyperbolic function ()
+# need function to calculate the value
+# Zhou you can change the delta as you wish as well as the threshold
+# Note the smaller the threshold the longer the time.
+# I haven't tested the function well enough but it should work for 
+# any tangent function 
+x0 = starting_point
+y0 = func(x0)
+x1 = x0 + dt
+y1 = func(x1)
+
+iter = 0
+
+while (abs(y1 - y0) > threshold) {
+x0 = x1
+y0 = func(x0)
+x1 = x0 + dt
+y1 = func(x1)
+iter = iter + 1
+cat("iteration :" , iter, "\n")
+}
+
+if(abs(y1 - y0) < threshold){
+  cat("\nPoint where the difference between the two", deparse(substitute(func)), 
+      "(x) is infinitesimally small\n")
+  cat("difference between the two point", abs(y1 - y0), "\n")
+  cat(deparse(substitute(func)), "(x) = ", y1)
+}
+
+invisible(y1) 
+}
+```
+
+
+```{r}
+# example 1
+f = function(x) tanh(x)
+plot(f(x), type = "o")
+find_hmax(f, 0.0001)
+hmax = find_hmax(f)
+abline(h = hmax, lty = 2)
+# example 2
+f = function(x, y) x/(x + 1)
+hmax = find_hmax(f, threshold = 0.008)
+y = f(x)
+plot(x, y)
+par(new = TRUE)
+abline(h = hmax, lty = 2)
+```
+
